@@ -14,11 +14,11 @@
 }
 
 .content-main {
-    background-color: white;
-    flex-grow: 1;
     display: flex;
-    overflow-x: scroll;
-    border-top-left-radius: 20px;
+    flex-direction: column;
+    flex-grow: 1;
+    background-color: white;
+    overflow-x: auto;
 }
 
 .content-wrap {
