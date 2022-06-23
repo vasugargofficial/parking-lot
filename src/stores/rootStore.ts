@@ -1,13 +1,13 @@
 import {CarDetails, ParkingLot, Slot} from "../resources";
 import {action, makeObservable, observable} from "mobx";
 import {generateUniqueID} from "web-vitals/dist/modules/lib/generateUniqueID";
-import {Color} from "react-bootstrap/types";
+import {Color} from "../enums";
 
-class FormData {
+export class ParkingFormData {
     parkingName: string | null = null;
     parkingSize: number | null = null;
     carRegistrationNumber: string | null = null;
-    carColor: Color | null = null;
+    carColor: Color = Color.WHITE;
 
     constructor() {
         makeObservable(this, {
@@ -28,7 +28,7 @@ class FormData {
         this.parkingSize = null;
         this.parkingName = null;
         this.carRegistrationNumber = null;
-        this.carColor = null;
+        this.carColor = Color.WHITE;
     }
 }
 
@@ -37,7 +37,8 @@ export class RootStore {
     selectedParkingLot?: ParkingLot;
     showParkingLotComposerModal: boolean = false;
     showCarSlotComposerModal: boolean = false;
-    formData: FormData = new FormData();
+    showQueryDataModal: boolean = false;
+    formData: ParkingFormData = new ParkingFormData();
 
     constructor() {
         makeObservable(this, {
@@ -49,7 +50,9 @@ export class RootStore {
             toggleParkingLotComposer: action,
             showCarSlotComposerModal: observable,
             toggleCarSlotComposer: action,
-            setSelectedParkingLotId: action
+            setSelectedParkingLot: action,
+            showQueryDataModal: observable,
+
         });
     }
 
@@ -90,7 +93,11 @@ export class RootStore {
         this.showCarSlotComposerModal = !this.showCarSlotComposerModal;
     }
 
-    setSelectedParkingLotId = (parkingLot: ParkingLot) => {
+    setSelectedParkingLot = (parkingLot: ParkingLot) => {
         this.selectedParkingLot = parkingLot;
+    }
+
+    toggleQueryModal = () => {
+        this.showQueryDataModal = !this.showQueryDataModal;
     }
 }

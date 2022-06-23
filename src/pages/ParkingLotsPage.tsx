@@ -26,21 +26,25 @@ export const ParkingLotsPage = observer((props: IStore) => {
                     {lot.size}
                 </td>
                 <td className={'text-success'}>
-                    {lot.availableSlots?.length || 0}
+                    {lot.availableSlots.length}
                 </td>
                 <td className={'text-danger'}>
-                    {lot.reservedSlots?.length || 0}
+                    {lot.reservedSlots.length}
                 </td>
                 <td>
                     <Button className={'border-dark'} color={'white'} onClick={() => {
-                        store.setSelectedParkingLotId(lot);
+                        store.setSelectedParkingLot(lot);
                         store.toggleCarSlotComposer();
-                    }}>
+                    }}
+                    >
                         + Park Car
                     </Button>
                 </td>
                 <td>
-                    <Button className={'border-dark'} color={'white'}>
+                    <Button className={'border-dark'} color={'white'} onClick={() => {
+                        store.setSelectedParkingLot(lot);
+                        store.toggleQueryModal();
+                    }}>
                         View Data
                     </Button>
                 </td>

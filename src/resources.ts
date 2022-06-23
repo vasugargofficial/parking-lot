@@ -1,4 +1,4 @@
-import {Color} from "react-bootstrap/types";
+import {Color} from "./enums";
 
 export interface ParkingLot {
     id: string;

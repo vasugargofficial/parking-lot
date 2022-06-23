@@ -3,10 +3,14 @@ import {observer} from "mobx-react";
 import {IStore} from "../App";
 import {Button, Input, Label} from "reactstrap";
 import {Color} from "../enums";
+import React, {useState} from "react";
 
 
 export const CarSlotComposer = observer((props: IStore) => {
     const {store} = props;
+    const initialButtonLabel = 'Get parking slot';
+    const [buttonLabel, setButtonLabel] = useState(initialButtonLabel);
+
     return <Modal show={store.showCarSlotComposerModal}>
         <ModalHeader>
             Add Car Details
@@ -37,7 +41,7 @@ export const CarSlotComposer = observer((props: IStore) => {
                     <Input
                         id="carColor"
                         name="carColor"
-                        onChange={(e) => store.formData.updateValue('carColor', e.target.value)}
+                        onChange={(e) => store.formData.updateValue('carColor', e.target.value.toUpperCase())}
                         type="select"
                     >
                         {Object.values(Color).map(color => <option key={color}>{color.toLowerCase()}</option>)}
@@ -47,21 +51,24 @@ export const CarSlotComposer = observer((props: IStore) => {
         </ModalBody>
         <ModalFooter>
             <Button
-                color={'success'}
+                color={buttonLabel === initialButtonLabel ? 'success' : 'primary'}
+                disabled={buttonLabel !== initialButtonLabel}
                 onClick={() => {
                     if (store.formData.carRegistrationNumber && store.formData.carColor) {
                         store.addCarInParkingLot({
                             registrationNumber: store.formData.carRegistrationNumber,
                             color: store.formData.carColor
                         });
+                        setButtonLabel(`Slot Number: ${store.selectedParkingLot?.reservedSlots[store.selectedParkingLot?.reservedSlots.length - 1].ticketNumber}`);
                     }
                 }}
             >
-                Book Slot
+                {buttonLabel}
             </Button>
             {' '}
             <Button onClick={() => {
                 store.toggleCarSlotComposer();
+                setButtonLabel(initialButtonLabel);
                 store.formData.reset();
             }}>
                 Close
