@@ -15,10 +15,7 @@
 
 .content-main {
     display: flex;
-    flex-direction: column;
-    flex-grow: 1;
     background-color: white;
-    overflow-x: auto;
 }
 
 .content-wrap {

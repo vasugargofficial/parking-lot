@@ -5,7 +5,7 @@ export interface ParkingLot {
     name: string;
     size: number;
     availableSlots: Slot[];
-    reservedSlots?: Slot[];
+    reservedSlots: Slot[];
 }
 
 export interface Slot {
