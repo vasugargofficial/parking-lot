@@ -1,46 +1,58 @@
-# Getting Started with Create React App
+**Problem Statement:**
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Design a parking lot which can hold n cars of different color and different registration numbers.
 
-## Available Scripts
+Every car has been issued a ticket for a spot and the spot has been assigned based on the nearest to the entry point.
 
-In the project directory, you can run:
+The system should also return some queries such as:
 
-### `npm start`
+* Registration numbers of all cars of a particular Color.
+* Ticket number in which a car with a given registration number is placed.
+* Ticket numbers of all ticket where a car of a particular color is placed.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+**Solution Approch:**
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+To enable the user to create mutltiple parking lots, I have created a list of parking lots where every parking lot have 
 
-### `npm test`
+* Size => Max number of slots available
+* Reserved slots (Array of object of terminals)
+* Available slots (Array of object of terminals)
+* Name of parking lot
+* Number of entry points
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Terminal will have
 
-### `npm run build`
+* Terminal number
+* Slots
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Every slot will have 
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+* Slot number (Number also denotes the distance from the entry point)
+* Car Details
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Car details will include
 
-### `npm run eject`
+* Car registration number
+* Car color (Enum of common color names)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+**How Parking slot is getting assigned based on distance from entry point?**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+1- Take the number of entry points from the user and also ask division of slots by entry points.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+2- Create the list of slots for every terminal where car details will be undefined and slot numbers will be initialized by consecutive numners till size of that entry point.
 
-## Learn More
+3- On Car park, shift the list of that terminal where car is waiting so we will have the slot number of that car because shift will always return the first element.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+4- Add this slot in reserved slot for that entry point.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+5- While parking car, make a map of car and their entry points so that on exit or searching the car we will not need to search in whole parking lot.
+
+
+
+
+
+
+
+
+ 
