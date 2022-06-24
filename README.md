@@ -49,6 +49,8 @@ Car details will include
 5- While parking car, make a map of car and their entry points so that on exit or searching the car we will not need to search in whole parking lot.
 
 
+Application can be viewed [here](https://warm-choux-21dd4f.netlify.app/)
+
 
 
 
