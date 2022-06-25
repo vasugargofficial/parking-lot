@@ -18,7 +18,7 @@ export const ParkingLotsPage = observer((props: IStore) => {
         </thead>
         <tbody>
         {store.parkingLots.map(lot => {
-            return <tr>
+            return <tr key={lot.id}>
                 <th scope={'row'}>
                     {lot.name}
                 </th>

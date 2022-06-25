@@ -7,6 +7,7 @@ export interface ParkingLot {
     totalTerminals: number;
     availableSlots: Terminal[];
     reservedSlots: Terminal[];
+    carsWithTerminals: {[key: string]: number};
 }
 
 export interface Terminal {

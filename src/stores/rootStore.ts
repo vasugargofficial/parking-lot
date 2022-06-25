@@ -19,7 +19,8 @@ export class ParkingFormData {
             carColor: observable,
             updateValue: action,
             terminalSize: observable,
-            terminalNumber: observable
+            terminalNumber: observable,
+            reset: action
         });
     }
 
@@ -68,7 +69,8 @@ export class RootStore {
             size: size,
             totalTerminals: totalTerminals,
             availableSlots: this.getSlotsByTerminal(totalTerminals, size),
-            reservedSlots: this.generateTerminals(totalTerminals, Array(totalTerminals).fill(0))
+            reservedSlots: this.generateTerminals(totalTerminals, Array(totalTerminals).fill(0)),
+            carsWithTerminals: {}
         });
     }
 
@@ -108,10 +110,30 @@ export class RootStore {
     addCarInParkingLot = (carDetails: CarDetails, terminalNumber: number) => {
         const parkingLot = this.parkingLots.find(lot => lot.id === this.selectedParkingLot?.id);
         if (parkingLot) {
-            const slot = parkingLot.availableSlots.find(terminal => terminal.terminalNumber === terminalNumber)?.slots.shift();
+            let slot = parkingLot.availableSlots.find(terminal => terminal.terminalNumber === terminalNumber)?.slots.shift();
+
             if (slot) {
                 slot.carDetails = carDetails;
                 parkingLot.reservedSlots.find(terminal => terminal.terminalNumber === terminalNumber)?.slots.push(slot);
+                parkingLot.carsWithTerminals[carDetails.registrationNumber] = terminalNumber;
+                
+                return {
+                    terminalNumber: terminalNumber,
+                    slot: slot
+                }
+            } else {
+                const nearestTerminal = this.findNearestSlotInTerminals(terminalNumber);
+                slot = nearestTerminal?.slots.shift();
+                 if (slot && nearestTerminal) {
+                     slot.carDetails = carDetails;
+                     parkingLot.reservedSlots.find(terminal => terminal.terminalNumber === nearestTerminal?.terminalNumber)?.slots.push(slot);
+                     parkingLot.carsWithTerminals[carDetails.registrationNumber] = nearestTerminal.terminalNumber;
+                 }
+
+                return {
+                    terminalNumber: nearestTerminal?.terminalNumber,
+                    slot: slot
+                }
             }
         }
     }
@@ -130,5 +152,15 @@ export class RootStore {
 
     toggleQueryModal = () => {
         this.showQueryDataModal = !this.showQueryDataModal;
+    }
+
+    findNearestSlotInTerminals = (terminalNumber: number) => {
+        return this.selectedParkingLot?.availableSlots
+            .filter(terminal => !!terminal.slots.length)?.map(terminal => {
+                return {
+                    distance: Math.abs(terminalNumber - terminal.terminalNumber) + terminal.slots[0].ticketNumber,
+                    terminal: terminal
+                }
+            })?.sort((a, b) => a.distance - b.distance)[0]?.terminal;
     }
 }

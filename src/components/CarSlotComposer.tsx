@@ -48,7 +48,7 @@ export const CarSlotComposer = observer((props: IStore) => {
                         {Object.values(Color).map(color => <option key={color}>{color.toLowerCase()}</option>)}
                     </Input>
                 </FormGroup>
-                <FormGroup className="mb-2 me-sm-2 mb-sm-0">
+                <FormGroup className="mt-2 mb-2 me-sm-2 mb-sm-0">
                     <Label
                         className="me-sm-2"
                         for="terminalNumber"
@@ -71,12 +71,12 @@ export const CarSlotComposer = observer((props: IStore) => {
                 disabled={buttonLabel !== initialButtonLabel}
                 onClick={() => {
                     if (store.formData.carRegistrationNumber && store.formData.carColor && store.formData.terminalNumber && !isInvalidTerminal) {
-                        store.addCarInParkingLot({
+                        const details = store.addCarInParkingLot({
                             registrationNumber: store.formData.carRegistrationNumber,
                             color: store.formData.carColor
                         }, store.formData.terminalNumber);
-                        console.log(store.selectedParkingLot?.reservedSlots);
-                        // setButtonLabel(`Slot Number: ${store.selectedParkingLot?.reservedSlots[store.selectedParkingLot?.reservedSlots.length - 1].ticketNumber}`);
+
+                        details && setButtonLabel(`Ticket Number:  T${details.terminalNumber}, ${details.slot?.ticketNumber}`)
                     }
                 }}
             >
