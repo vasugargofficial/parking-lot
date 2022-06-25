@@ -6,6 +6,7 @@ import {Button, Input, Label} from "reactstrap";
 
 export const ParkingLotComposer = observer((props: IStore) => {
     const {store} = props;
+    const isTerminalSizeInValid = (store.formData.terminalSize || 1) > (store.formData.parkingSize || 1);
     return <Modal show={store.showParkingLotComposerModal}>
         <ModalHeader>
             Add Details
@@ -37,18 +38,35 @@ export const ParkingLotComposer = observer((props: IStore) => {
                         id="parkingSize"
                         name="parkingSize"
                         placeholder="Total slots available"
-                        onChange={(e) => store.formData.updateValue('parkingSize', e.target.value)}
+                        onChange={(e) => store.formData.updateValue('parkingSize', Number(e.target.value))}
                         type="number"
                     />
                 </FormGroup>
+                <FormGroup className="mt-2 mb-2 me-sm-2 mb-sm-0">
+                    <Label
+                        className="me-sm-2"
+                        for="terminalSize"
+                    >
+                        Total Terminals
+                    </Label>
+                    <Input
+                        id="terminalSize"
+                        name="terminalSize"
+                        placeholder="Total Terminals"
+                        onChange={(e) => store.formData.updateValue('terminalSize', Number(e.target.value))}
+                        type="number"
+                        invalid={isTerminalSizeInValid}
+                    />
+                </FormGroup>
+
             </Form>
         </ModalBody>
         <ModalFooter>
             <Button
                 color={'success'}
                 onClick={() => {
-                    if (store.formData.parkingName && store.formData.parkingSize) {
-                        store.addParkingLot(store.formData.parkingName, store.formData.parkingSize);
+                    if (store.formData.parkingName && store.formData.parkingSize && store.formData.terminalSize && !isTerminalSizeInValid) {
+                        store.addParkingLot(store.formData.parkingName, store.formData.parkingSize, store.formData.terminalSize);
                         store.toggleParkingLotComposer();
                         store.formData.reset();
                     }

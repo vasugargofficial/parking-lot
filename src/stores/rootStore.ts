@@ -1,4 +1,4 @@
-import {CarDetails, ParkingLot, Slot} from "../resources";
+import {CarDetails, ParkingLot, Slot, Terminal} from "../resources";
 import {action, makeObservable, observable} from "mobx";
 import {generateUniqueID} from "web-vitals/dist/modules/lib/generateUniqueID";
 import {Color} from "../enums";
@@ -8,6 +8,8 @@ export class ParkingFormData {
     parkingSize: number | null = null;
     carRegistrationNumber: string | null = null;
     carColor: Color = Color.WHITE;
+    terminalSize: number | null = null;
+    terminalNumber: number | null = null;
 
     constructor() {
         makeObservable(this, {
@@ -16,6 +18,8 @@ export class ParkingFormData {
             carRegistrationNumber: observable,
             carColor: observable,
             updateValue: action,
+            terminalSize: observable,
+            terminalNumber: observable
         });
     }
 
@@ -29,6 +33,8 @@ export class ParkingFormData {
         this.parkingName = null;
         this.carRegistrationNumber = null;
         this.carColor = Color.WHITE;
+        this.terminalSize = null;
+        this.terminalNumber = null;
     }
 }
 
@@ -51,19 +57,44 @@ export class RootStore {
             showCarSlotComposerModal: observable,
             toggleCarSlotComposer: action,
             setSelectedParkingLot: action,
-            showQueryDataModal: observable,
-
+            showQueryDataModal: observable
         });
     }
 
-    addParkingLot = (name: string, size: number) => {
+    addParkingLot = (name: string, size: number, totalTerminals: number) => {
         this.parkingLots.push({
             id: generateUniqueID(),
             name: name,
             size: size,
-            availableSlots: this.generateSlots(size),
-            reservedSlots: []
+            totalTerminals: totalTerminals,
+            availableSlots: this.getSlotsByTerminal(totalTerminals, size),
+            reservedSlots: this.generateTerminals(totalTerminals, Array(totalTerminals).fill(0))
         });
+    }
+
+    getSlotsByTerminal = (totalTerminals: number, totalSlots: number): Terminal[] => {
+        const n = Math.ceil(totalSlots / totalTerminals);
+        const slotsDistribution: number[] = Array(Math.floor(totalSlots / n)).fill(n);
+        const remainder = totalSlots % n;
+
+        if (remainder > 0) {
+            slotsDistribution.push(remainder);
+        }
+
+        return this.generateTerminals(totalTerminals, slotsDistribution);
+    }
+
+    generateTerminals = (totalTerminals: number, slotsDistribution: number[]) => {
+        const terminals: Terminal[] = [];
+
+        for (let terminal = 1; terminal <= totalTerminals; terminal++) {
+            terminals.push({
+                terminalNumber: terminal,
+                slots: this.generateSlots(slotsDistribution[terminal - 1])
+            })
+        }
+
+        return terminals;
     }
 
     generateSlots = (size: number): Slot[] => {
@@ -74,13 +105,13 @@ export class RootStore {
         return slots;
     }
 
-    addCarInParkingLot = (carDetails: CarDetails) => {
+    addCarInParkingLot = (carDetails: CarDetails, terminalNumber: number) => {
         const parkingLot = this.parkingLots.find(lot => lot.id === this.selectedParkingLot?.id);
         if (parkingLot) {
-            const slot = parkingLot.availableSlots.shift();
+            const slot = parkingLot.availableSlots.find(terminal => terminal.terminalNumber === terminalNumber)?.slots.shift();
             if (slot) {
                 slot.carDetails = carDetails;
-                parkingLot.reservedSlots?.push(slot);
+                parkingLot.reservedSlots.find(terminal => terminal.terminalNumber === terminalNumber)?.slots.push(slot);
             }
         }
     }

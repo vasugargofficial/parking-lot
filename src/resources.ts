@@ -4,8 +4,14 @@ export interface ParkingLot {
     id: string;
     name: string;
     size: number;
-    availableSlots: Slot[];
-    reservedSlots: Slot[];
+    totalTerminals: number;
+    availableSlots: Terminal[];
+    reservedSlots: Terminal[];
+}
+
+export interface Terminal {
+    terminalNumber: number;
+    slots: Slot[];
 }
 
 export interface Slot {

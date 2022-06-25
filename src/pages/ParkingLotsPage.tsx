@@ -9,7 +9,7 @@ export const ParkingLotsPage = observer((props: IStore) => {
         <thead>
         <tr>
             <th>Name</th>
-            <th>Size</th>
+            <th>Total Terminals</th>
             <th>Available Slots</th>
             <th>Reserved Slots</th>
             <th/>
@@ -23,13 +23,17 @@ export const ParkingLotsPage = observer((props: IStore) => {
                     {lot.name}
                 </th>
                 <td>
-                    {lot.size}
+                    {lot.totalTerminals}
                 </td>
                 <td className={'text-success'}>
-                    {lot.availableSlots.length}
+                    {lot.availableSlots.reduce(function (acc, terminal) {
+                        return acc + terminal.slots.length;
+                    }, 0)}
                 </td>
                 <td className={'text-danger'}>
-                    {lot.reservedSlots.length}
+                    {lot.reservedSlots.reduce(function (acc, terminal) {
+                        return acc + terminal.slots.length;
+                    }, 0)}
                 </td>
                 <td>
                     <Button className={'border-dark'} color={'white'} onClick={() => {

@@ -10,6 +10,7 @@ export const CarSlotComposer = observer((props: IStore) => {
     const {store} = props;
     const initialButtonLabel = 'Get parking slot';
     const [buttonLabel, setButtonLabel] = useState(initialButtonLabel);
+    const isInvalidTerminal = (store.selectedParkingLot?.totalTerminals || 1) < (store.formData.terminalNumber || 1);
 
     return <Modal show={store.showCarSlotComposerModal}>
         <ModalHeader>
@@ -47,6 +48,21 @@ export const CarSlotComposer = observer((props: IStore) => {
                         {Object.values(Color).map(color => <option key={color}>{color.toLowerCase()}</option>)}
                     </Input>
                 </FormGroup>
+                <FormGroup className="mb-2 me-sm-2 mb-sm-0">
+                    <Label
+                        className="me-sm-2"
+                        for="terminalNumber"
+                    >
+                        Current Terminal Number
+                    </Label>
+                    <Input
+                        id="terminalNumber"
+                        name="terminalNumber"
+                        onChange={(e) => store.formData.updateValue('terminalNumber', Number(e.target.value))}
+                        type={"number"}
+                        invalid={isInvalidTerminal}
+                    />
+                </FormGroup>
             </Form>
         </ModalBody>
         <ModalFooter>
@@ -54,12 +70,13 @@ export const CarSlotComposer = observer((props: IStore) => {
                 color={buttonLabel === initialButtonLabel ? 'success' : 'primary'}
                 disabled={buttonLabel !== initialButtonLabel}
                 onClick={() => {
-                    if (store.formData.carRegistrationNumber && store.formData.carColor) {
+                    if (store.formData.carRegistrationNumber && store.formData.carColor && store.formData.terminalNumber && !isInvalidTerminal) {
                         store.addCarInParkingLot({
                             registrationNumber: store.formData.carRegistrationNumber,
                             color: store.formData.carColor
-                        });
-                        setButtonLabel(`Slot Number: ${store.selectedParkingLot?.reservedSlots[store.selectedParkingLot?.reservedSlots.length - 1].ticketNumber}`);
+                        }, store.formData.terminalNumber);
+                        console.log(store.selectedParkingLot?.reservedSlots);
+                        // setButtonLabel(`Slot Number: ${store.selectedParkingLot?.reservedSlots[store.selectedParkingLot?.reservedSlots.length - 1].ticketNumber}`);
                     }
                 }}
             >

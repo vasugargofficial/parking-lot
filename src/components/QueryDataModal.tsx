@@ -38,7 +38,7 @@ export const QueryDataModal = observer((props: IQueryDataProps) => {
                 </Col>
                 <Col md={2}>
                     <p className={'fw-bold'}>
-                        {"Slot Number: " + (parkingLot.reservedSlots.find(slot => slot.carDetails?.registrationNumber === formData.carRegistrationNumber)?.ticketNumber || '-')}
+                        {"Slot Number: " + (parkingLot.reservedSlots.find(terminal => terminal.slots.find(slot => slot.carDetails?.registrationNumber === formData.carRegistrationNumber)?.ticketNumber || '-'))}
                     </p>
                 </Col>
             </Row>
@@ -66,7 +66,7 @@ export const QueryDataModal = observer((props: IQueryDataProps) => {
             </Row>
             <UncontrolledCollapse toggler={'registration-results'}>
                 <div className={'p-2'}>
-                    {parkingLot.reservedSlots.filter(slot => slot.carDetails?.color === formData.carColor).map(slot => slot.carDetails?.registrationNumber).join(", ")}
+                    {/*{parkingLot.reservedSlots.filter(terminal => terminal.slots.carDetails?.color === formData.carColor).map(slot => slot.carDetails?.registrationNumber).join(", ")}*/}
                 </div>
             </UncontrolledCollapse>
             <Row className={'p-2'}>
@@ -93,7 +93,7 @@ export const QueryDataModal = observer((props: IQueryDataProps) => {
             </Row>
             <UncontrolledCollapse toggler={'slot-results'}>
                 <div className={'p-2'}>
-                    {parkingLot.reservedSlots.filter(slot => slot.carDetails?.color === formData.carColor).map(slot => slot.ticketNumber).join(", ")}
+                    {/*{parkingLot.reservedSlots.filter(slot => slot.carDetails?.color === formData.carColor).map(slot => slot.ticketNumber).join(", ")}*/}
                 </div>
             </UncontrolledCollapse>
         </ModalBody>
