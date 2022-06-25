@@ -17,6 +17,17 @@ interface IQueryDataProps {
 export const QueryDataModal = observer((props: IQueryDataProps) => {
     const {parkingLot, isOpen, toggler, formData} = props;
 
+    const findCarFromRegistrationNumber = () => {
+        const terminalNumber = parkingLot.carsWithTerminals[formData.carRegistrationNumber as string];
+        const slot = parkingLot.reservedSlots.find(terminal => terminal.terminalNumber === terminalNumber)?.slots
+            .find(slot => slot.carDetails?.registrationNumber === formData.carRegistrationNumber)?.ticketNumber;
+        return terminalNumber && slot ? `T${terminalNumber}, ${slot}` : '-';
+    }
+
+    const findSlotsOfSelectedColor = () => {
+        return Array.prototype.concat.apply([], parkingLot.reservedSlots.map(terminal => terminal.slots.filter(slot => slot.carDetails?.color === formData.carColor)));
+    }
+
     return <Modal show={isOpen} size={'xl'}>
         <ModalHeader>
             Parking Lot Details
@@ -38,7 +49,7 @@ export const QueryDataModal = observer((props: IQueryDataProps) => {
                 </Col>
                 <Col md={2}>
                     <p className={'fw-bold'}>
-                        {"Slot Number: " + (parkingLot.reservedSlots.find(terminal => terminal.slots.find(slot => slot.carDetails?.registrationNumber === formData.carRegistrationNumber)?.ticketNumber || '-'))}
+                        {"Slot Number: " + findCarFromRegistrationNumber()}
                     </p>
                 </Col>
             </Row>
@@ -66,7 +77,7 @@ export const QueryDataModal = observer((props: IQueryDataProps) => {
             </Row>
             <UncontrolledCollapse toggler={'registration-results'}>
                 <div className={'p-2'}>
-                    {/*{parkingLot.reservedSlots.filter(terminal => terminal.slots.carDetails?.color === formData.carColor).map(slot => slot.carDetails?.registrationNumber).join(", ")}*/}
+                    {findSlotsOfSelectedColor().map(slot => slot.carDetails.registrationNumber).join(", ")}
                 </div>
             </UncontrolledCollapse>
             <Row className={'p-2'}>
@@ -93,12 +104,15 @@ export const QueryDataModal = observer((props: IQueryDataProps) => {
             </Row>
             <UncontrolledCollapse toggler={'slot-results'}>
                 <div className={'p-2'}>
-                    {/*{parkingLot.reservedSlots.filter(slot => slot.carDetails?.color === formData.carColor).map(slot => slot.ticketNumber).join(", ")}*/}
+                    {findSlotsOfSelectedColor().map(slot => slot.ticketNumber).join(", ")}
                 </div>
             </UncontrolledCollapse>
         </ModalBody>
         <ModalFooter>
-            <Button onClick={toggler}>
+            <Button onClick={() => {
+                toggler();
+                formData.reset();
+            }}>
                 Close
             </Button>
         </ModalFooter>
